@@ -1,5 +1,6 @@
 from django.core.exceptions import FieldError
 from django.core.exceptions import ImproperlyConfigured
+from django.views.generic import ListView
 from fudge.inspector import arg
 from .._utils import *
 
@@ -65,3 +66,10 @@ class PublishedModelMixinTestCase(ArmContentTestCase):
 
 class PublishedModelDetailViewTestCase(PublishedModelMixinTestCase):
     view_class = publication.PublishedModelDetailView
+
+
+class PublishedModelListViewTestCase(PublishedModelMixinTestCase):
+    view_class = publication.PublishedModelListView
+
+    def test_is_mixed_in_with_django_ListView(self):
+        self.assertTrue(issubclass(self.view_class, ListView))

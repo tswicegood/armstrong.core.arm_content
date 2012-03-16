@@ -1,5 +1,5 @@
-from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.views.generic.detail import DetailView
+from django.views.generic import ListView
 
 from ..publication.utils import add_publication_filters
 
@@ -28,4 +28,8 @@ class PublishedModelViewMixin(object):
 
 
 class PublishedModelDetailView(PublishedModelViewMixin, DetailView):
+    pass
+
+
+class PublishedModelListView(PublishedModelViewMixin, ListView):
     pass
