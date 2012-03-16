@@ -27,8 +27,6 @@ class PublishedModelMixinTestCase(ArmContentTestCase):
 
     def test_get_queryset_calls_select_subclasses_if_present(self):
         expected = random.randint(100, 200)
-        # other_qs = fudge.Fake()
-        # other_qs.expects("select_subclasses").returns(expected)
         qs = fudge.Fake()
         qs.expects("all").returns(qs)
         qs.expects("select_subclasses").returns(expected)
