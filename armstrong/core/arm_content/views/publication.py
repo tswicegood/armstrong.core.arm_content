@@ -1,5 +1,4 @@
-from django.views.generic.detail import DetailView
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
 from ..publication.utils import add_publication_filters
 
