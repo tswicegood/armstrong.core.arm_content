@@ -9,12 +9,7 @@ class PublishedModelViewMixin(object):
         try:
             return self.model.published.all()
         except AttributeError:
-            try:
-                return add_publication_filters(self.model.objects)
-            except FieldError:
-                raise ImproperlyConfigured(
-                        "%s can not be filtered for publication status" % (
-                            self.model.__name__))
+            return add_publication_filters(self.model.objects)
 
     def get_queryset(self):
         """

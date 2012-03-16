@@ -55,6 +55,7 @@ class PublishedModelMixinTestCase(ArmContentTestCase):
         qs = fudge.Fake()
         qs.expects("filter").raises(FieldError())
         model = fudge.Fake().has_attr(objects=qs, __name__=random_name)
+        qs.has_attr(model=model)
 
         view = self.get_view_with_model(model)
         try:

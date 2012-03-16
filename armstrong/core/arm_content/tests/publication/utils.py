@@ -1,4 +1,4 @@
-from fudge.inspector import arg
+from django.core.exceptions import FieldError, ImproperlyConfigured
 from .._utils import *
 
 from ...publication import utils
@@ -19,3 +19,18 @@ class add_publication_filtersTestCase(ArmContentTestCase):
         qs.expects("filter").with_args(pub_date__lte=r, pub_status="P")
         with fudge.patched_context(utils, "datetime", datetime):
             utils.add_publication_filters(qs)
+
+    def test_raises_improperly_configured_if_it_cannot_filter(self):
+        random_name = "Foo%d" % random.randint(100, 200)
+        model = fudge.Fake()
+        model.has_attr(__name__=random_name)
+        qs = fudge.Fake()
+        qs.has_attr(model=model)
+        qs.expects("filter").raises(FieldError())
+
+        # Use try/except to keep 2.6 compat
+        try:
+            utils.add_publication_filters(qs)
+        except ImproperlyConfigured, e:
+            msg = "%s can not be filtered for publication status" % random_name
+            self.assertEqual(e.message, msg)
