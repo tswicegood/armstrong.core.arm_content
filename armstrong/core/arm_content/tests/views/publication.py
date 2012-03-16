@@ -1,4 +1,6 @@
+from django.core.exceptions import FieldError
 from django.core.exceptions import ImproperlyConfigured
+from fudge.inspector import arg
 from .._utils import *
 
 from ...views import publication
@@ -37,16 +39,29 @@ class PublishedModelMixinTestCase(ArmContentTestCase):
         view.get_queryset()
         fudge.verify()
 
-    def test_gracefully_handles_models_without_published_manager(self):
-        class Foo(object):
-            pass
-        view = self.get_view_with_model(Foo)
-        # Use try/catch here for 2.6 compatibility
+    def test_can_filter_models_without_published(self):
+        qs = fudge.Fake()
+        qs.expects("filter").with_args(pub_date__lte=arg.any(),
+                pub_status="P")
+        model = fudge.Fake()
+        model.has_attr(objects=qs)
+
+        view = self.get_view_with_model(model)
+        view.get_published_queryset()
+        fudge.verify()
+
+    def test_gracefully_handles_models_without_correct_fields(self):
+        random_name = "Foo%d" % random.randint(100, 200)
+        qs = fudge.Fake()
+        qs.expects("filter").raises(FieldError())
+        model = fudge.Fake().has_attr(objects=qs, __name__=random_name)
+
+        view = self.get_view_with_model(model)
         try:
-            view.get_queryset()
+            view.get_published_queryset()
         except ImproperlyConfigured, e:
-            self.assertEqual(e.message,
-                    "Foo does not have a published property")
+            msg = "%s can not be filtered for publication status" % random_name
+            self.assertEqual(e.message, msg)
 
 
 class PublishedModelDetailViewTestCase(PublishedModelMixinTestCase):
