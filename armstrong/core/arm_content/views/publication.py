@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.detail import DetailView
 
 
-class PublishedModelDetailView(DetailView):
+class PublishedModelViewMixin(object):
     def get_queryset(self):
         """
         Returns queryset filtered for only published models
@@ -22,3 +22,7 @@ class PublishedModelDetailView(DetailView):
             raise ImproperlyConfigured(
                 "%s does not have a published property" % (
                     self.model.__name__))
+
+
+class PublishedModelDetailView(PublishedModelViewMixin, DetailView):
+    pass

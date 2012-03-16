@@ -1,12 +1,14 @@
 from django.core.exceptions import ImproperlyConfigured
 from .._utils import *
 
-from ...views.publication import PublishedModelDetailView
+from ...views import publication
 
 
-class PublishedModelDetailViewTestCase(ArmContentTestCase):
+class PublishedModelMixinTestCase(ArmContentTestCase):
+    view_class = publication.PublishedModelViewMixin
+
     def get_view_with_model(self, model):
-        view = PublishedModelDetailView()
+        view = self.view_class()
         view.model = model
         return view
 
@@ -45,3 +47,7 @@ class PublishedModelDetailViewTestCase(ArmContentTestCase):
         except ImproperlyConfigured, e:
             self.assertEqual(e.message,
                     "Foo does not have a published property")
+
+
+class PublishedModelDetailViewTestCase(PublishedModelMixinTestCase):
+    view_class = publication.PublishedModelDetailView
