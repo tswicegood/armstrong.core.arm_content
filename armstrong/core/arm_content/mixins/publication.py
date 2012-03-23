@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.sites.models import Site
 
 # TODO: Remove this for v2.0 (deprecated)
-from ..managers.publication import PublishedManager, InheritanceManager
+from model_utils.managers import InheritanceManager
+from ..publication.managers import PublishedManager
 
 
 PUB_STATUS_CHOICES = (
