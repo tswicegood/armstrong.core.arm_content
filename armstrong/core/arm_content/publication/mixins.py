@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.sites.models import Site
 
@@ -20,6 +21,11 @@ class SimplePublicationMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def is_published(self):
+        return self.pub_date <= datetime.now() \
+            and self.pub_status == "P"
 
 
 class PublicationMixin(SimplePublicationMixin, models.Model):
